@@ -222,7 +222,7 @@
 
         const max = 300;
 
-        db.orderBy('timestamp').onSnapshot(({ docs }) => {
+        db.orderBy('timestamp', 'desc').onSnapshot(({ docs }) => {
           current = 0;
           list.innerText = '';
           docs.forEach((doc) => {
