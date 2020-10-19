@@ -3,136 +3,181 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Welcome to Firebase Hosting</title>
+    <title>Spartan 300k challenge</title>
 
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/7.24.0/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
     <script defer src="/__/firebase/7.24.0/firebase-auth.js"></script>
-    <script defer src="/__/firebase/7.24.0/firebase-database.js"></script>
-    <script defer src="/__/firebase/7.24.0/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/7.24.0/firebase-storage.js"></script>
-    <script defer src="/__/firebase/7.24.0/firebase-analytics.js"></script>
-    <script defer src="/__/firebase/7.24.0/firebase-remote-config.js"></script>
-    <script defer src="/__/firebase/7.24.0/firebase-performance.js"></script>
+    <script defer src="/__/firebase/7.24.0/firebase-firestore.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="/__/firebase/init.js"></script>
-
-    <style media="screen">
+    <style>
       body {
-        background: #eceff1;
-        color: rgba(0, 0, 0, 0.87);
-        font-family: Roboto, Helvetica, Arial, sans-serif;
-        margin: 0;
-        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        max-width: 50em;
+        padding: 1em;
+        margin: 0 auto;
       }
-      #message {
-        background: white;
-        max-width: 360px;
-        margin: 100px auto 16px;
-        padding: 32px 24px;
-        border-radius: 3px;
+
+      * {
+        box-sizing: border-box;
       }
-      #message h2 {
-        color: #ffa100;
-        font-weight: bold;
-        font-size: 16px;
-        margin: 0 0 8px;
+
+      button,
+      input {
+        font: inherit;
+        border: 1px solid currentColor;
       }
-      #message h1 {
-        font-size: 22px;
-        font-weight: 300;
-        color: rgba(0, 0, 0, 0.6);
-        margin: 0 0 16px;
+
+      form label {
+        display: flex;
+        margin: 1em;
       }
-      #message p {
-        line-height: 140%;
-        margin: 16px 0 24px;
-        font-size: 14px;
+      form label input {
+        flex-grow: 1;
+        margin: 0 1em;
       }
-      #message a {
+
+      .error {
+        margin: 1em;
+      }
+
+      button {
+        padding: 0.2em;
+        margin: 1em;
+        background: transparent;
         display: block;
-        text-align: center;
-        background: #039be5;
-        text-transform: uppercase;
-        text-decoration: none;
-        color: white;
-        padding: 16px;
-        border-radius: 4px;
       }
-      #message,
-      #message a {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+      .full-width {
+        width: calc(100% - 3em);
+        margin: 1em;
       }
-      #load {
-        color: rgba(0, 0, 0, 0.4);
-        text-align: center;
-        font-size: 13px;
-      }
-      @media (max-width: 600px) {
-        body,
-        #message {
-          margin-top: 0;
-          background: white;
-          box-shadow: none;
-        }
-        body {
-          border-top: 16px solid #ffa100;
-        }
+
+      #logout-button:hover {
+        background-color: red;
       }
     </style>
   </head>
   <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>
-        You're seeing this because you've successfully setup Firebase Hosting.
-        Now it's time to go build something extraordinary!
-      </p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/"
-        >Open Hosting Documentation :)</a
-      >
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+    <details hidden id="logged-out-container">
+      <summary>log in</summary>
+      <form action="" id="login-form">
+        <label>
+          email:
+          <input required type="email" name="email" id="email-input" />
+        </label>
+        <label>
+          password:
+          <input required type="password" name="password" id="password-input" />
+        </label>
+        <span class="error"></span>
+        <button type="submit" class="full-width">log in</button>
+      </form>
+    </details>
+
+    <details open hidden id="logged-in-container">
+      <summary>add an activity</summary>
+      <form action="" id="activity-form">
+        <label>
+          Spartan:
+          <input required type="text" name="user" id="user-input" />
+        </label>
+
+        <label>
+          Contribution (km):
+          <input required type="number" name="amount" id="amount-input" />
+        </label>
+
+        <label>
+          Discipline:
+          <input required type="text" name="discipline" id="discipline-input" />
+        </label>
+
+        <span class="error"></span>
+        <button type="submit" class="full-width">submit</button>
+        <button id="logout-button" class="float-right">log out</button>
+      </form>
+    </details>
+
+    <progress value="50" max="300"></progress>
+    <p>progress: 50 out of 300 km</p>
+    <ul>
+      <li>Bram: 5km - fiets</li>
+      <li>Berent: 50km - fiets</li>
+    </ul>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        firebase.auth().onAuthStateChanged((user) => {
-          console.log('auth', user);
-        });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+      document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth',
-            'database',
-            'messaging',
-            'storage',
-            'analytics',
-            'remoteConfig',
-            'performance',
-          ].filter((feature) => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(
-            ', '
-          )}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent =
-            'Error loading the Firebase SDK, check the console.';
-        }
+        const data = new FormData(e.target);
+
+        console.log(data);
+
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(
+            document.getElementById('email-input').value,
+            document.getElementById('password-input').value
+          )
+          .catch((err) => {
+            e.target.querySelector('.error').textContent = err.message;
+          });
+      });
+
+      document
+        .getElementById('activity-form')
+        .addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const data = new FormData(e.target);
+
+          const db = firebase.firestore();
+
+          db.collection('activities')
+            .add({
+              user: data.get('user'),
+              amount: Number(data.get('amount')),
+              discipline: data.get('discipline'),
+              author_uid: firebase.auth().currentUser.uid,
+            })
+            .then((docRef) => {
+              e.target.querySelector('.error').textContent = 'saved!';
+            })
+            .catch((error) => {
+              e.target.querySelector('.error').textContent = error.message;
+            });
+        });
+
+      document
+        .getElementById('logout-button')
+        .addEventListener('click', (e) => {
+          e.preventDefault();
+          firebase.auth().signOut();
+        });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const loggedOut = document.getElementById('logged-out-container');
+        const loggedIn = document.getElementById('logged-in-container');
+
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            loggedOut.hidden = true;
+            loggedIn.hidden = false;
+          } else {
+            loggedOut.hidden = false;
+            loggedIn.hidden = true;
+          }
+        });
+
+        const db = firebase.firestore().collection('activities');
+
+        db.get().then((res) => {
+          console.log(res);
+        });
       });
     </script>
   </body>
