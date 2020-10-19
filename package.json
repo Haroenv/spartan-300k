@@ -2,5 +2,8 @@
   "name": "spartan-300k",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "firebase-tools": "^8.12.1"
+  }
 }
